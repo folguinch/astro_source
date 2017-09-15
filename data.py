@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-class data(object):
+class Data(object):
     """Data ABC.
 
     Attributes:
@@ -19,6 +19,9 @@ class data(object):
         self.address = address
         self.data = None
 
+        if os.path.isfile(file_name):
+            self.load(file_name)
+
     @abstractmethod
     def load(self):
         """Open file in *address*."""
@@ -29,6 +32,6 @@ class data(object):
         """Saves the file in *address* or in a new address if provided.
         
         Parameters:
-            address (default None): new address
+            address (default=None): new address
         """
         pass
