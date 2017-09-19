@@ -33,3 +33,11 @@ class Data2D(Data):
             file_name (default=None): new file name.
         """
         self.data.writeto(file_name or self.address , clobber=True)
+
+    @property
+    def array(self):
+        return self.data[self.nhdu].data
+
+    @property
+    def header(self):
+        return self.data[self.nhdu].header
