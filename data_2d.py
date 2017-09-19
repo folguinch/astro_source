@@ -1,6 +1,7 @@
 from data import Data
 
 from astropy.io import fits
+import astropy.units as u
 
 class Data2D(Data):
     """Defines a data in 2D.
@@ -13,14 +14,15 @@ class Data2D(Data):
         nhdu: HDU number to work with.
     """
 
-    def __init__(self, address):
+    def __init__(self, address, nhdu=0):
         """Defines a new data object.
 
         Parameters:
-            address: filename
+            address (str): file name.
+            nhdu (int, default=0): HDU number.
         """
         super(Data2D, self).__init__(address)
-        self.nhdu = 0
+        self.nhdu = nhdu
 
     def load(self):
         """Load the data"""
@@ -41,3 +43,7 @@ class Data2D(Data):
     @property
     def header(self):
         return self.data[self.nhdu].header
+
+    @property
+    def unit(self):
+        return 1.*u.Unit(self.header['BUNIT'])
