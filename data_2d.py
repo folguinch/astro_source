@@ -1,7 +1,8 @@
-from data import Data
-
 from astropy.io import fits
 import astropy.units as u
+from myutils.logger import get_logger
+
+from .data import Data
 
 class Data2D(Data):
     """Defines a data in 2D.
@@ -23,6 +24,7 @@ class Data2D(Data):
         """
         super(Data2D, self).__init__(address)
         self.nhdu = nhdu
+        self.logger = get_logger(__name__)
 
     def load(self):
         """Load the data"""

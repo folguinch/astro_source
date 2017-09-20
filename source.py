@@ -1,9 +1,10 @@
 import os
 
+from myutils.data import load_data_by_type
+from myutils.logger import get_logger
+
 from .container import Container
 from .register import REGISTERED_CLASSES
-
-from myutils.data import load_data_by_type
 
 class Source(Container):
     """Defines an astronomical source, its properties and data.
@@ -12,6 +13,7 @@ class Source(Container):
         name: name of the source.
         config: configuration file of the source.
         data: the data belonging to the source.
+        logger: logging manager.
     """
 
     def __init__(self, name, config):
@@ -23,6 +25,7 @@ class Source(Container):
         """
         super(Source, self).__init__(name)
         self.load_config(config)
+        self.logger = get_logger(__name__)
 
     def load_data(self, section):
         """Load the data.

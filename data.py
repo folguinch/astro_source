@@ -1,11 +1,13 @@
 from abc import ABCMeta, abstractmethod
+from myutils.logger import get_logger
 
 class Data(object):
     """Data ABC.
 
     Attributes:
-        address: file name
-        data: the data in the file
+        address: file name.
+        data: the data in the file.
+        logger: logging manager.
     """
 
     __metaclass__ = ABCMeta
@@ -18,6 +20,7 @@ class Data(object):
         """
         self.address = address
         self.data = None
+        self.logger = get_logger(__name__)
 
         if os.path.isfile(file_name):
             self.load(file_name)
@@ -28,10 +31,10 @@ class Data(object):
         pass
 
     @abstractmethod
-    def save(self, address=None):
+    def save(self, file_name=None):
         """Saves the file in *address* or in a new address if provided.
         
         Parameters:
-            address (default=None): new address
+            file_name (default=None): new file name.
         """
         pass

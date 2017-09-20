@@ -1,6 +1,7 @@
 from myutils.array_utils import *
+from myutils.logger import get_logger
 
-from data import Data
+from .data import Data
 
 class Data1D(Data):
     """Creates a 1-D data structure.
@@ -9,9 +10,10 @@ class Data1D(Data):
     slices.
 
     Attributes:
-        address: file name
-        data: the data
-        units: units of the elements of the data
+        address: file name.
+        data: the data.
+        units: units of the elements of the data.
+        logger: logging manager.
     """
 
     def __init__(self, file_name, wlg=None):
@@ -23,6 +25,7 @@ class Data1D(Data):
         """
         self.units = None
         super(Profile, self).__init__(file_name)
+        self.logger = get_logger(__name__)
 
     def load(self):
         """Load data from file.
