@@ -32,8 +32,24 @@ class Source(Container):
 
         # Load configuration
         self.logger.debug('Loading configuration file: %s', config)
+        try:
+            assert os.path.isfile(config)
+        except AssertionError:
+            self.logger.exception('File %s does not exist', config)
         self.load_config(config)
         self.logger.info('Configuration file loaded')
+
+    def __str__(self):
+        """String representation"""
+        line = '%s\n%s\n' % (self.name, '-'*len(self.name))
+        fmt = '%s = %s\n'
+        for item in self.config.items('INFO'):
+            line += fmt % item
+        if self.data:
+            line += 'Loaded data:\n\t'
+            for key in self.data.iterkeys():
+                line += '%s, ' % key
+        return line.strip().strip(',')
 
     def load_data(self, section):
         """Load the data.
@@ -58,17 +74,18 @@ class Source(Container):
             else:
                 self.load_data(section)
 
-class NewSource(argparse.Action):
+class LoadSource(argparse.Action):
     """Action class for loading a source in argparse
     """
 
     def __init__(self, option_strings, dest, nargs=None, const=None, default=None,
             type=None, choices=None, required=False, help=None, metavar=None,
             config=None):
-        super(NewSource,self).__init__(option_strings, dest, nargs=None, 
+        super(LoadSource,self).__init__(option_strings, dest, nargs=None, 
                 const=None, default=None, type=None, choices=None, 
                 required=False, help=None, metavar=None)
-        self.source_dir = config.get('DIRECTORIES', 'sources')
+        self.source_dir = os.path.expanduser(config.get('DIRECTORIES',
+            'sources'))
         return
 
     def __call__(self, parser, namespace, values, option_string=None):
