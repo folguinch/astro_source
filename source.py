@@ -1,4 +1,4 @@
-import os
+import os, argparse
 
 from myutils.data import load_data_by_type
 from myutils.logger import get_logger
@@ -23,9 +23,17 @@ class Source(Container):
             name: the name of the source.
             config: the configuration file.
         """
+        # Initialize
         super(Source, self).__init__(name)
-        self.load_config(config)
+
+        # Get class logger
         self.logger = get_logger(__name__)
+        self.logger.info('Initializing source: %s', self.name)
+
+        # Load configuration
+        self.logger.debug('Loading configuration file: %s', config)
+        self.load_config(config)
+        self.logger.info('Configuration file loaded')
 
     def load_data(self, section):
         """Load the data.
@@ -49,3 +57,22 @@ class Source(Container):
                 continue
             else:
                 self.load_data(section)
+
+class NewSource(argparse.Action):
+    """Action class for loading a source in argparse
+    """
+
+    def __init__(self, option_strings, dest, nargs=None, const=None, default=None,
+            type=None, choices=None, required=False, help=None, metavar=None,
+            config=None):
+        super(NewSource,self).__init__(option_strings, dest, nargs=None, 
+                const=None, default=None, type=None, choices=None, 
+                required=False, help=None, metavar=None)
+        self.source_dir = config.get('DIRECTORIES', 'sources')
+        return
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        source = Source(values, os.path.join(self.source_dir, values,
+            'config/config.cfg'))
+        setattr(namespace, self.dest, source)
+
