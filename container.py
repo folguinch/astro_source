@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from configparser import ConfigParser, ExtendedInterpolation
 
-class container(object):
+class Container(object):
     """Defines a container ABC.
 
     Attributes:
@@ -20,14 +20,14 @@ class container(object):
         """
         self.name = name
         self.config = None
-        self.data= {}
+        self.data = {}
 
     @abstractmethod
-    def load(self, key, file_name):
+    def load_data(self, key, file_name):
         """Load *data* from file and save it in *key*"""
         pass
 
-    def load_all(self, keys, file_names):
+    def load_data_from_keys(self, keys, file_names):
         """Load all the data in each file in *file_names* and store it in
         *key*
         
@@ -44,7 +44,6 @@ class container(object):
         Parameters:
             config_file (str): name of the configuration file
         """
-        self.config = ConfigParser(interpolation=ExtendedInterpolation)
+        self.config = ConfigParser(interpolation=ExtendedInterpolation())
         self.config.read(config_file)
-
 
