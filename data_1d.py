@@ -27,6 +27,16 @@ class Data1D(Data):
         super(Data1D, self).__init__(file_name)
         self.logger = get_logger(__name__)
 
+    def __getitem__(self, key):
+        return self.data[key] * self.units[key]
+
+    def __setitem__(self, key, val):
+        assert hasattr(val, 'value')
+        assert hasattr(val, 'key')
+        assert len(val.value)==len(self[key].value)
+        self.data[key] = val.value
+        self.units[key] = 1. * val.unit
+
     def load(self):
         """Load data from file.
 
