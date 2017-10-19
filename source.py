@@ -80,16 +80,15 @@ class LoadSource(argparse.Action):
 
     def __init__(self, option_strings, dest, nargs=None, const=None, default=None,
             type=None, choices=None, required=False, help=None, metavar=None,
-            config=None):
-        super(LoadSource,self).__init__(option_strings, dest, nargs=None, 
-                const=None, default=None, type=None, choices=None, 
-                required=False, help=None, metavar=None)
-        self.source_dir = os.path.expanduser(config.get('DIRECTORIES',
-            'sources'))
+            source_dir='./'):
+        super(LoadSource,self).__init__(option_strings, dest, nargs=nargs, 
+                const=const, default=default, type=type, choices=choices, 
+                required=required, help=help, metavar=metavar)
+        self.directory = os.path.expanduser(source_dir)
         return
 
     def __call__(self, parser, namespace, values, option_string=None):
-        source = Source(values, os.path.join(self.source_dir, values,
+        source = Source(values, os.path.join(self.directory, values,
             'config/config.cfg'))
         setattr(namespace, self.dest, source)
 
