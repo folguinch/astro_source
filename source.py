@@ -39,6 +39,10 @@ class Source(Container):
         self.load_config(config)
         self.logger.info('Configuration file loaded')
 
+        # Load data
+        self.logger.info('Loading data')
+        self.load_all_data()
+
     def __str__(self):
         """String representation"""
         line = '%s\n%s\n' % (self.name, '-'*len(self.name))
@@ -61,10 +65,11 @@ class Source(Container):
         Parameters:
             section (str): the data to be loaded.
         """
-        assert os.path.isfile(self.config[section]['loc'])
+        data_file = os.path.expanduser(self.config[section]['loc'])
+        assert os.path.isfile(data_file)
 
-        self.data[section] = load_data_by_type(self.config[section]['loc'], 
-                self.config[section]['type'].lower(), REGISTERD_CLASSES)
+        self.data[section] = load_data_by_type(data_file, 
+                self.config[section]['type'].lower(), REGISTERED_CLASSES)
 
     def load_all_data(self):
         """Load all the data with information in the configuration file."""
@@ -72,6 +77,7 @@ class Source(Container):
             if section=='INFO' or 'type' not in self.config.options(section):
                 continue
             else:
+                self.logger.info('Loading: %s', section)
                 self.load_data(section)
 
 class LoadSource(argparse.Action):
