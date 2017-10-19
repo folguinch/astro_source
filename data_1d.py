@@ -24,7 +24,7 @@ class Data1D(Data):
             wlg (float, default=None): wavelength.
         """
         self.units = None
-        super(Profile, self).__init__(file_name)
+        super(Data1D, self).__init__(file_name)
         self.logger = get_logger(__name__)
 
     def load(self):
