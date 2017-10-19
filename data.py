@@ -1,3 +1,4 @@
+import os
 from abc import ABCMeta, abstractmethod
 from myutils.logger import get_logger
 
@@ -22,8 +23,9 @@ class Data(object):
         self.data = None
         self.logger = get_logger(__name__)
 
-        if os.path.isfile(file_name):
-            self.load(file_name)
+        if os.path.isfile(address):
+            self.logger.debug('Load file: %s', address)
+            self.load()
 
     @abstractmethod
     def load(self):
