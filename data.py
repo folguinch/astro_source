@@ -13,17 +13,17 @@ class Data(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, address):
+    def __init__(self, address=None, data=None):
         """Defines a new data object.
 
         Parameters:
             address: filename
         """
         self.address = address
-        self.data = None
+        self.data = data
         self.logger = get_logger(__name__)
 
-        if os.path.isfile(address):
+        if address and os.path.isfile(address):
             self.logger.debug('Load file: %s', address)
             self.load()
 
