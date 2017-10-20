@@ -1,3 +1,4 @@
+from scipy.interpolate import interp1d
 from myutils.array_utils import *
 from myutils.logger import get_logger
 
@@ -16,15 +17,15 @@ class Data1D(Data):
         logger: logging manager.
     """
 
-    def __init__(self, file_name, wlg=None):
+    def __init__(self, file_name=None, data=None, units=None, wlg=None):
         """Creates a new profile object.
 
         Parameters:
             file_name (str): file name of the profile.
             wlg (float, default=None): wavelength.
         """
-        self.units = None
-        super(Data1D, self).__init__(file_name)
+        self.units = units
+        super(Data1D, self).__init__(file_name, data)
         self.logger = get_logger(__name__)
 
     def __getitem__(self, key):
@@ -51,6 +52,32 @@ class Data1D(Data):
             file_name (default=None): new file name.
         """
         save_struct_array(file_name, self.data, self.units)
+
+    def as_function(self, keyx, keyy, **kwargs):
+        """Interpolate the data and return a function.
+
+        Parameters:
+            keyx: key of the x value.
+            keyy: key of the y value.
+            kwargs: arguments for scipy.interpolate.interp1d
+        """
+        kind = kwargs.pop('kind', 'linear')
+        bound_error = kwargs.pop('bounds_error', False)
+        fill_value = kwargs.pop('fill_value', 0.)
+        return interp1d(self.data[keyx], self.data[keyy], kind=kind,
+                bounds_error=bound_error, fill_value=fill_value, **kwargs)
+
+    def interpolate(self, keyx, keyy, newx, **kwargs):
+        """Interpolate the data and evaluate in new points.
+
+        Parameters:
+            keyx: key of the x data.
+            keyy: key of the y data.
+            newx: values where the interpolated function is evaluated.
+            kwargs: arguments for scipy.interpolate.interp1d
+        """
+        fn = self.as_function(keyx, keyy, **kwargs)
+        return fn(newx.to(self.units[keyx]).value) * self.units[keyy]
 
     def convert(self, key, new_unit):
         """Convert the units of data in *key* to *new_unit*.
