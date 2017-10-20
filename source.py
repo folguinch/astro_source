@@ -1,5 +1,7 @@
 import os, argparse
 
+import astropy.units as u
+from astropy.coordinates import SkyCoord
 from myutils.data import load_data_by_type
 from myutils.logger import get_logger
 
@@ -54,6 +56,33 @@ class Source(Container):
             for key in self.data.iterkeys():
                 line += '%s, ' % key
         return line.strip().strip(',')
+
+    def get_quantity(self, prop, section='INFO'):
+        q = self.config.get(section, prop).split()
+        return float(q[0]) * u.Unit(q[1])
+
+    @property
+    def distance(self):
+        return self.get_quantity('distance')
+
+    @property
+    def luminosity(self):
+        return self.get_quantity('luminosity')
+
+    @property
+    def position(self):
+        ra = self.config.get('INFO','ra')
+        dec = self.config.get('INFO','dec')
+        frame = self.config.get('INFO','frame',fallback='icrs')
+        return SkyCoord(ra, dec, frame=frame)
+
+    @property
+    def ra(self):
+        return self.position.ra
+
+    @property
+    def dec(self):
+        return self.position.dec
 
     def load_data(self, section):
         """Load the data.
