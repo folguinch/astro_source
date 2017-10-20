@@ -17,6 +17,7 @@ class Source(Container):
         data: the data belonging to the source.
         logger: logging manager.
     """
+    logger = get_logger(__name__)
 
     def __init__(self, name, config):
         """Creates a new Source.
@@ -26,20 +27,8 @@ class Source(Container):
             config: the configuration file.
         """
         # Initialize
-        super(Source, self).__init__(name)
-
-        # Get class logger
-        self.logger = get_logger(__name__)
-        self.logger.info('Initializing source: %s', self.name)
-
-        # Load configuration
-        self.logger.debug('Loading configuration file: %s', config)
-        try:
-            assert os.path.isfile(config)
-        except AssertionError:
-            self.logger.exception('File %s does not exist', config)
-        self.load_config(config)
-        self.logger.info('Configuration file loaded')
+        self.logger.info('Initializing source: %s', name)
+        super(Source, self).__init__(name, config)
 
         # Load data
         self.logger.info('Loading data')
