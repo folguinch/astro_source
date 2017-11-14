@@ -28,9 +28,13 @@ class Data3D(Data):
             self.data = SpectralCube.read(self.address)
         except:
             self.logger.warn('Trying to fix the cube')
-            cube = fits.open(fname)[0]
+            cube = fits.open(self.address)[0]
             cube.header['CUNIT3'] = 'm/s'
             cube.header['CRVAL3'] = cube.header['CRVAL3'] * 1.E3
             cube.header['CDELT3'] = cube.header['CDELT3'] * 1.E3
             self.data = SpectralCube(cube.data, WCS(cube.header))
             self.logger.info('Cube fixed')
+
+    def save(self, filename=None, overwrite=True):
+        """Save the data cube"""
+        self.data.write(filename or self.address, overwrite=overwrite)
