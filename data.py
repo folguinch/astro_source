@@ -19,13 +19,20 @@ class Data(object):
         Parameters:
             address: filename
         """
-        self.address = address
         self.data = data
         self.logger = get_logger(__name__)
 
-        if address and os.path.isfile(address):
+        try:
+            self.address = os.path.realpath(os.path.expanduser(address))
+        except AttributeError:
+            self.address = address
+
+        if self.address and os.path.isfile(self.address):
             self.logger.debug('Load file: %s', address)
+            self.logger.info('Load file: %s', os.path.basename(address))
             self.load()
+        else:
+            self.logger.info('Nothing to load from: %s', self.address)
 
     @abstractmethod
     def load(self):
