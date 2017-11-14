@@ -83,7 +83,7 @@ class Source(Container):
         Parameters:
             section (str): the data to be loaded.
         """
-        data_file = os.path.expanduser(self.config[section]['loc'])
+        data_file = os.path.expanduser(self.config[section]['file'])
         assert os.path.isfile(data_file)
 
         self.data[section] = load_data_by_type(data_file, 
@@ -113,6 +113,6 @@ class LoadSource(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         source = Source(values, os.path.join(self.directory, values,
-            'config/config.cfg'))
+            'config/source.cfg'))
         setattr(namespace, self.dest, source)
 
