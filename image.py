@@ -18,4 +18,4 @@ class Image(Data2D):
 
     @property
     def wcs(self):
-        return WCS(self.header)
+        return WCS(self.header).sub(['longitude', 'latitude'])
