@@ -73,6 +73,15 @@ class Source(Container):
     def dec(self):
         return self.position.dec
 
+    def get_type(self, section):
+        """Get the type of data.
+
+        Parameters:
+            section (str): the data key.
+        """
+        assert section in self.config.sections()
+        return self.config[section]['type'].lower()
+
     def load_data(self, section):
         """Load the data.
 
