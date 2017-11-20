@@ -52,7 +52,7 @@ class Data3D(Data):
         Parameters:
             xpix (float): x-position of the coordinate.
             ypix (float): y-position of the coordinate.
-            frame (str, default=icrs): sky frame projection.
+            frame (str, default=fk5): sky frame projection.
 
         Returns:
             coord (astropy.SkyCoord): sky coordinate of the input location.
