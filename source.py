@@ -19,15 +19,20 @@ class Source(Container):
     """
     logger = get_logger(__name__)
 
-    def __init__(self, name, config):
+    def __init__(self, name=None, config=None):
         """Creates a new Source.
 
         Parameters:
             name: the name of the source.
             config: the configuration file.
         """
+        assert name is not None or config is not None
+
         # Initialize
-        self.logger.info('Initializing source: %s', name)
+        if name is not None:
+            self.logger.info('Initializing source: %s', name)
+        else:
+            self.logger.info('Initializing source from configuration')
         super(Source, self).__init__(name, config)
 
         # Load data
@@ -107,6 +112,25 @@ class Source(Container):
                 self.logger.info('Loading: %s', section)
                 self.load_data(section)
 
+    def load_config(self, config_file):
+        """Load a configuration file.
+
+        Parameters:
+            config_file (str): name of the configuration file
+        """
+        super(Source, self).load_config(config_file)
+        
+        # Check INFO section
+        if 'INFO' not in self.config:
+            self.logger.warn('Source does not have INFO: some functions will not work')
+
+        # Check source name
+        if self.name is None:
+            self.name = self.config.get('INFO', 'name', fallback='NN')
+            self.logger.info('Source name: %s', self.name)
+        else:
+            pass
+
 class LoadSource(argparse.Action):
     """Action class for loading a source in argparse
     """
@@ -124,4 +148,13 @@ class LoadSource(argparse.Action):
         source = Source(values, os.path.join(self.directory, values,
             'config/source.cfg'))
         setattr(namespace, self.dest, source)
+
+class LoadSourcefromConfig(argparse.Action):
+    """Load the a source from a configuration file given from the command
+    line"""
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        source = Source(config=os.path.realpath(values))
+        setattr(namespace, self.dest, source)
+
 
