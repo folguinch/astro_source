@@ -1,4 +1,5 @@
-from .data_1d import Data1D
+from myutils.classes.data_1d import Data1D
+
 from .register import register_class
 
 @register_class

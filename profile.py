@@ -1,7 +1,7 @@
 from myutils.array_utils import *
 from myutils.logger import get_logger
+from myutils.classes.data_1d import Data1D
 
-from .data_1d import Data1D
 from .register import register_class
 
 @register_class

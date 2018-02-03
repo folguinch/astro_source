@@ -1,6 +1,6 @@
 import numpy as np
+from myutils.classes.data_3d import Data3D
 
-from .data_3d import Data3D
 from .register import register_class
 
 @register_class
