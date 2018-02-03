@@ -1,8 +1,9 @@
 import os
 from abc import ABCMeta, abstractmethod
-from configparser import ConfigParser, ExtendedInterpolation
+from configparser import ExtendedInterpolation
 
 from myutils.logger import get_logger
+from myutils.myconfigparser import myConfigParser
 
 class Container(object):
     """Defines a container ABC.
@@ -66,6 +67,6 @@ class Container(object):
         Parameters:
             config_file (str): name of the configuration file
         """
-        self.config = ConfigParser(interpolation=ExtendedInterpolation())
+        self.config = myConfigParser(interpolation=ExtendedInterpolation())
         self.config.read(config_file)
 
