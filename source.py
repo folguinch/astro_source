@@ -2,7 +2,7 @@ import os, argparse
 
 import astropy.units as u
 from astropy.coordinates import SkyCoord
-from myutils.classes.data import load_data_by_type
+from myutils.data import load_data_by_type
 from myutils.logger import get_logger
 
 from .container import Container
@@ -52,7 +52,7 @@ class Source(Container):
         return line.strip().strip(',')
 
     def get_quantity(self, prop, section='INFO'):
-        return self.config.getquantity(section, prop)
+        return self.config.getquantity(section, prop, fallback=None)
 
     @property
     def distance(self):
