@@ -1,7 +1,4 @@
 import os, argparse
-from configparser import ExtendedInterpolation
-
-import numpy as np
 
 from .image import Image
 
