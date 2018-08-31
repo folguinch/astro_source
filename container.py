@@ -59,7 +59,7 @@ class Container(object):
             file_names (iterable): list of files to load
         """
         for k,f in zip(keys, file_names):
-            self.load(k, f)
+            self.load_data(k, f)
 
     def load_config(self, config_file):
         """Load a configuration file.
