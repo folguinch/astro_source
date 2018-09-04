@@ -17,7 +17,7 @@ class Source(Container):
         data: the data belonging to the source.
         logger: logging manager.
     """
-    logger = get_logger(__name__)
+    logger = get_logger(__name__, __package__+'.log')
 
     def __init__(self, name=None, config=None):
         """Creates a new Source.

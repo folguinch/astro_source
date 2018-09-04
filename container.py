@@ -2,8 +2,8 @@ import os
 from abc import ABCMeta, abstractmethod
 from configparser import ExtendedInterpolation
 
-from myutils.logger import get_logger
 from myutils.myconfigparser import myConfigParser
+from myutils.logger import get_logger
 
 class Container(object):
     """Defines a container ABC.
@@ -14,7 +14,7 @@ class Container(object):
         data: all the data contained
     """
     __metaclass__ = ABCMeta
-    logger = get_logger(__name__)
+    logger = get_logger(__name__, __package__+'.log')
 
     def __init__(self, name, config=None):
         """Defines a new container.

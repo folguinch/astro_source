@@ -25,5 +25,5 @@ class Profile(Data1D):
         """
         self.wlg = wlg
         super(Profile, self).__init__(file_name)
-        self.logger = get_logger(__name__)
+        self.logger = get_logger(__name__, __package__+'.log')
 

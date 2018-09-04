@@ -14,7 +14,7 @@ class Image(Data2D):
         nhdu: HDU number to work with.
         logger: logging manager
     """
-    logger = get_logger(__name__)
+    logger = get_logger(__name__, __package__+'.log')
 
     @property
     def wcs(self):
