@@ -16,25 +16,30 @@ class Container(object):
     __metaclass__ = ABCMeta
     logger = get_logger(__name__, __package__+'.log')
 
-    def __init__(self, name, config=None):
+    def __init__(self, name, config_file=None, config=None):
         """Defines a new container.
 
         Parameters:
             name: container name
         """
+        assert not (config_file is not None and config is not None)
+
         self.name = name
         self.data = {}
 
-        if config:
+        if config_file:
             # Load configuration
-            self.logger.debug('Loading configuration file: %s', config)
+            self.logger.debug('Loading configuration file: %s', config_file)
             try:
-                assert os.path.isfile(config)
+                assert os.path.isfile(config_file)
             except AssertionError:
-                self.logger.exception('File %s does not exist', config)
-                exit()
-            self.load_config(config)
+                self.logger.exception('File %s does not exist', config_file)
+                raise IOError
+            self.load_config(config_file)
             self.logger.info('Configuration file loaded')
+        elif config is not None:
+            self.config = config
+            self.logger.info('Configuration assigned')
         else:
             self.config = None
 

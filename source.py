@@ -33,7 +33,7 @@ class Source(Container):
             self.logger.info('Initializing source: %s', name)
         else:
             self.logger.info('Initializing source from configuration')
-        super(Source, self).__init__(name, config)
+        super(Source, self).__init__(name, config_file=config)
 
         # Load data
         self.logger.info('Loading data')
