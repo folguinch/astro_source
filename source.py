@@ -19,12 +19,13 @@ class Source(Container):
     """
     logger = get_logger(__name__, __package__+'.log')
 
-    def __init__(self, name=None, config=None):
+    def __init__(self, name=None, config=None, otf=False):
         """Creates a new Source.
 
         Parameters:
             name: the name of the source.
             config: the configuration file.
+            otf: load data on-the-fly.
         """
         assert name is not None or config is not None
 
@@ -36,8 +37,9 @@ class Source(Container):
         super(Source, self).__init__(name, config_file=config)
 
         # Load data
-        self.logger.info('Loading data')
-        self.load_all_data()
+        if not otf:
+            self.logger.info('Loading all data')
+            self.load_all_data()
 
     def __str__(self):
         """String representation"""
@@ -86,7 +88,7 @@ class Source(Container):
         assert section in self.config.sections()
         return self.config[section]['type'].lower()
 
-    def load_data(self, section):
+    def load_data(self, section, file_name=None):
         """Load the data.
 
         It uses the classes registered in *REGISTERED_CLASSES* to identify
@@ -96,7 +98,10 @@ class Source(Container):
         Parameters:
             section (str): the data to be loaded.
         """
-        data_file = os.path.expanduser(self.config[section]['file'])
+        if file_name is not None:
+            data_file = os.path.expanduser(file_name)
+        else:
+            data_file = os.path.expanduser(self.config[section]['file'])
         assert os.path.isfile(data_file)
 
         self.data[section] = load_data_by_type(data_file, 
@@ -156,4 +161,10 @@ class LoadSourcefromConfig(argparse.Action):
         source = Source(config=os.path.realpath(values))
         setattr(namespace, self.dest, source)
 
+class LoadSourcesfromConfig(argparse.Action):
+    """Load the a source from a configuration file given from the command
+    line"""
 
+    def __call__(self, parser, namespace, values, option_string=None):
+        sources = [Source(config=os.path.realpath(v),otf=True) for v in values]
+        setattr(namespace, self.dest, sources)

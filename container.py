@@ -44,12 +44,13 @@ class Container(object):
             self.config = None
 
     @abstractmethod
-    def load_data(self, key, file_name):
+    def load_data(self, key, file_name=None):
         """Load *data* from file and save it in *key*"""
         pass
 
     def __getitem__(self, key):
-        assert key in self.data.keys()
+        if key not in self.data.keys():
+            self.load_data(key, None)
         return self.data[key]
 
     def __setitem__(self, key, value):
