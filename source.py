@@ -165,6 +165,10 @@ class LoadSourcesfromConfig(argparse.Action):
     """Load the a source from a configuration file given from the command
     line"""
 
+    def __init__(self, option_strings, dest, nargs='*', **kwargs):
+        super(LoadSourcesfromConfig, self).__init__(option_strings, dest, 
+                nargs=nargs, **kwargs)
+
     def __call__(self, parser, namespace, values, option_string=None):
         sources = [Source(config=os.path.realpath(v),otf=True) for v in values]
         setattr(namespace, self.dest, sources)
