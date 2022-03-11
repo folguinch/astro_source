@@ -1,12 +1,15 @@
-from os.path import basename, dirname, join
-from glob import glob
+"""A package for source information management.
+
+
+"""
+from pathlib import Path
 
 from .register import REGISTERED_CLASSES
 
 # Load all the classes
-pwd = dirname(__file__)
-for x in glob(join(pwd, '*.py')):
-    if not x.startswith('__'):
-        __import__(basename(x)[:-3], globals(), locals())
+cwd = Path(__file__).parent
+for x in cwd.glob('*.py'):
+    if not x.name.startswith('__'):
+        __import__(x.stem, globals(), locals())
 
 __all__ = ['REGISTERED_CLASSES']
