@@ -10,7 +10,7 @@ from astropy.io import fits
 
 # Global values
 REGISTERED_CLASSES = {
-    'spectral_cube': SpectralCube,
+    'spectral_cube': SpectralCube.read,
     'fits_file': fits.open,
 }
 

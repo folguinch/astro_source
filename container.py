@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Sequence, Optional, Union
 import abc
 
-from configparseradv import ConfigParserAdv
+from configparseradv.configparser import ConfigParserAdv
 from toolkit.logger import get_logger
 
 class Container(metaclass=abc.ABCMeta):
@@ -51,8 +51,8 @@ class Container(metaclass=abc.ABCMeta):
                 self.config = ConfigParserAdv(default_section=default_section)
 
             # Update name
-            if name is None and 'name' in config[default_section]:
-                self.name = config[default_section]['name']
+            if name is None and 'name' in self.config[default_section]:
+                self.name = self.config[default_section]['name']
             elif name is not None:
                 self.config[default_section]['name'] = name
             else:

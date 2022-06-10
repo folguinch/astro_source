@@ -4,7 +4,7 @@ from typing import Optional, Sequence, Union
 import argparse
 
 from astropy.coordinates import SkyCoord
-from configparseradv import ConfigParserAdv
+from configparseradv.configparser import ConfigParserAdv
 from toolkit.logger import get_logger
 
 from .container import Container
@@ -34,14 +34,13 @@ class Source(Container):
           config_file: optional; configuration file name.
           config: optional; `ConfigParserAdv` object.
         """
-        assert name is not None or config is not None
-
         # Initialize
         if name is not None:
             self.log.info('Initializing source: %s', name)
         else:
             self.log.info('Initializing source from configuration')
-        super().__init__(name, config_file=config_file, config=config)
+        super().__init__(name, config_file=config_file, config=config,
+                         default_section='INFO')
 
     def __str__(self):
         """String representation."""
@@ -174,10 +173,10 @@ class LoadSources(argparse.Action):
                  dest: str,
                  **kwargs) -> None:
         defaults = {'nargs': '*',
-                    'metavar': ('SRC_CONFIG',),
+                    'metavar': ('SRC_CONFIG', 'SRC_CONFIG'),
                     'help': 'Sources configuration files'}
         defaults.update(kwargs)
-        super().__init__(option_strings, dest, **kwargs)
+        super().__init__(option_strings, dest, **defaults)
 
     def __call__(self, parser, namespace, vals, option_string=None):
         sources = [Source(config_file=Path(val).expanduser()) for val in vals]
