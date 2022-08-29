@@ -140,3 +140,14 @@ class Container(metaclass=abc.ABCMeta):
         if update_from is not None:
             self.config.read_dict(update_from)
 
+    def write(self, filename: Optional[Path] = None) -> None:
+        """Write configuration file to disk."""
+        if filename is None and self.config_file is not None:
+            filename = self.config_file
+        elif filename is None and self.config_file is None:
+            raise ValueError('Source does not have config file')
+        else:
+            pass
+
+        with filename.open('w') as fl:
+            self.config.write(fl)
