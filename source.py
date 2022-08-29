@@ -51,7 +51,23 @@ class Source(Container):
             lines.append('Loaded data:')
             for key in self._data:
                 lines.append(f'\t{key}')
+        lines.append('-'*len(self.name))
         return '\n'.join(lines)
+
+    @classmethod
+    def from_values(cls, name: str, **kwargs):
+        """Generates a new instance storing the input parameter."""
+        # Store values
+        config = ConfigParserAdv()
+        config.read_dict({'INFO': {'name': name}})
+        for key, val in kwargs.items():
+            if hasattr(val, 'unit'):
+                unit = f'{val.unit}'.replace(' ', '')
+                config['INFO'][key] = f'{val.value} {unit}'
+            else:
+                config['INFO'][key] = f'{val}'
+
+        return cls(config=config)
 
     def get_quantity(self, opt, section='INFO'):
         """Get value in config as quantity."""
