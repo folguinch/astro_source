@@ -149,5 +149,5 @@ class Container(metaclass=abc.ABCMeta):
         else:
             pass
 
-        with filename.open('w') as fl:
+        with filename.open('w', encoding='utf-8') as fl:
             self.config.write(fl)

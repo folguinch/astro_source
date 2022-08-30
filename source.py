@@ -226,13 +226,13 @@ class SubSource(object):
           name: optional; subsource name.
         """
         name = parser.get('name', fallback=name)
-        
+
         return cls.from_dict(parser, name=name)
 
     @classmethod
     def from_dict(cls,
                   data: dict,
-                  name: Optional[str] = None)
+                  name: Optional[str] = None):
         """Create a new subsource from a dictionary.
 
         Args:
