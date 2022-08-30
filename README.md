@@ -47,3 +47,5 @@ file: /path/to/file.fits
 
 Subsource information can be retrieved by, e.g., `source.subsources['MM1'].info['radius']`.
 The data is loaded upon request (e.g. `source.load_data(data1)`) to save resources.
+
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
