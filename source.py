@@ -259,6 +259,11 @@ class SubSource(object):
 
         return cls(name, **info)
 
+    @property
+    def position(self):
+        """Position of the subsource."""
+        return self.info.get('position')
+
     def to_dict(self) -> dict:
         """Convert the values back to a dictionary with string values."""
         props = {'name': self.name, 'type': 'subsource'}
