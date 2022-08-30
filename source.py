@@ -6,18 +6,20 @@ import argparse
 from astropy.coordinates import SkyCoord
 from configparseradv.configparser import ConfigParserAdv
 from toolkit.logger import get_logger
+import astropy.units as u
 
 from .container import Container
 from .loaders import load_data_by_type, kwargs_from_config
 from .register import REGISTERED_CLASSES
 
 class Source(Container):
-    """Manages an astronomical source properties and data.
+    """Manages an astronomical source/region properties and data.
 
     Attributes:
       name: name of the source.
       config_file: configuration file name.
       config: configuration file of the source.
+      subsources: region subsources (if any).
       log: logging manager.
       _data: the data belonging to the source.
     """
@@ -40,13 +42,21 @@ class Source(Container):
         else:
             self.log.info('Initializing source from configuration')
         super().__init__(name, config_file=config_file, config=config,
-                         default_section='INFO')
+                         default_section='DEFAULT')
+
+        # Initiate subsources
+        self.subsources = {}
+        self.load_subsources()
 
     def __str__(self):
         """String representation."""
         lines = [f'{self.name}', '-'*len(self.name)]
         for opt, val in self.config.items('INFO'):
             lines.append(f'{opt} = {val}')
+        if self.subsources:
+            lines.append('Subsources:')
+            lines.append(','.join(f' {val.name} (key)'
+                                  for key, val in self.subsources.items()))
         if self._data:
             lines.append('Loaded data:')
             for key in self._data:
@@ -56,7 +66,7 @@ class Source(Container):
 
     @classmethod
     def from_values(cls, name: str, **kwargs):
-        """Generates a new instance storing the input parameter."""
+        """Generates a new instance storing the input arguments."""
         # Store values
         config = ConfigParserAdv()
         config.read_dict({'INFO': {'name': name}})
@@ -104,6 +114,15 @@ class Source(Container):
         """
         return self.config[section]['type'].lower()
 
+    def load_subsources(self) -> None:
+        """Load the subsources in `Source` configuration."""
+        for section, conf in self.config.items():
+            if not conf.get('type', fallback='') == 'subsource':
+                continue
+
+            self.subsources[section] = SubSource.from_config_proxy(conf,
+                                                                   name=section)
+
     def load_data(self, section: str,
                   file_name: Optional[Union[Path, str]] = None,
                   **kwargs) -> None:
@@ -143,6 +162,8 @@ class Source(Container):
         for section in self.config.sections():
             if section == 'INFO' or 'type' not in self.config[section]:
                 continue
+            elif self.config[section]['type'] == 'subsource':
+                continue
             else:
                 self.logger.info(f'Loading: {section}')
                 self.load_data(section)
@@ -163,6 +184,94 @@ class Source(Container):
         if 'INFO' not in self.config:
             self.log.warning(('Source does not have INFO section: '
                               'some functions will not work'))
+
+    def write(self, filename: Optional[Path] = None) -> None:
+        """Write configuration file to disk."""
+        # Store subsources in config
+        if self.subsources:
+            for key, val in self.subsources.items():
+                if key not in self.config:
+                    self.config[key] = val.to_dict()
+
+        # Write
+        super().write(filename=filename)
+
+class SubSource(object):
+    """Class for storing individual source information.
+
+    Some types of information have default types:
+
+    - `ra`, `dec` and `frame` are stored as `SkyCoord`.
+    - `radius` is stored as `astropy.units.Quantity`.
+
+    If only `ra` and `dec` are given, then ICRS is assumed as `frame`.
+
+    Attributes:
+      name: subsource name.
+      info: source information.
+    """
+
+    def __init__(self, name: str, **info):
+        self.name = name
+        self.info = info
+
+    @classmethod
+    def from_config_proxy(cls,
+                          parser: ConfigParserAdv,
+                          name: Optional[str] = None):
+        """Create a new subsource from a `ConfigParser` proxy.
+
+        Args:
+          parser: configuration parser proxy.
+          name: optional; subsource name.
+        """
+        name = parser.get('name', fallback=name)
+        
+        return cls.from_dict(parser, name=name)
+
+    @classmethod
+    def from_dict(cls,
+                  data: dict,
+                  name: Optional[str] = None)
+        """Create a new subsource from a dictionary.
+
+        Args:
+          data: configuration parser proxy.
+          name: optional; subsource name.
+        """
+        if name is None:
+            name = data.pop('name', name)
+        ignore_keys = ['type']
+        info = {}
+        position = {'frame': 'icrs'}
+        for key, val in data.items():
+            if key in ignore_keys:
+                continue
+            elif key in ['ra', 'dec', 'frame']:
+                position[key] = val
+            elif key in ['radius']:
+                info[key] = u.Quantity(val)
+            else:
+                info[key] = val
+
+        if 'ra' in position and 'dec' in position:
+            info['position'] = SkyCoord(**position)
+
+        return cls(name, **info)
+
+    def to_dict(self) -> dict:
+        """Convert the values back to a dictionary with string values."""
+        props = {'name': self.name, 'type': 'subsource'}
+        for key, val in self.info.items():
+            if key == 'position':
+                props['ra'], props['dec'] = val.to_string('hmsdms').split()
+                props['frame'] = val.frame.name
+            elif hasattr(val, 'unit'):
+                props[key] = f'{val.value} {val.unit}'
+            else:
+                props[key] = val
+
+        return props
 
 class LoadSource(argparse.Action):
     """Load a source in from config."""
