@@ -151,3 +151,15 @@ class Container(metaclass=abc.ABCMeta):
 
         with filename.open('w', encoding='utf-8') as fl:
             self.config.write(fl)
+
+    def get_data_sections(self, dtypes: Sequence) -> Sequence:
+        """Return the sections in configuration that have data."""
+        sections = []
+        for section, cfg in self.config.items():
+            if 'type' not in cfg:
+                continue
+            elif cfg['type'] in dtypes:
+                sections.append(section)
+
+        return sections
+

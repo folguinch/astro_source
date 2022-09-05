@@ -92,6 +92,10 @@ class Source(Container):
         return self.get_quantity('luminosity')
 
     @property
+    def vlsr(self):
+        return self.get_quantity('vlsr')
+
+    @property
     def position(self):
         ra = self.config['INFO']['ra']
         dec = self.config['INFO']['dec']
@@ -195,6 +199,9 @@ class Source(Container):
 
         # Write
         super().write(filename=filename)
+
+    def get_data_sections(self) -> Sequence:
+        return super().get_data_sections(tuple(REGISTERED_CLASSES.keys()))
 
 class SubSource(object):
     """Class for storing individual source information.
