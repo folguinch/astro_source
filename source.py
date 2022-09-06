@@ -42,7 +42,7 @@ class Source(Container):
         else:
             self.log.info('Initializing source from configuration')
         super().__init__(name, config_file=config_file, config=config,
-                         default_section='DEFAULT')
+                         default_section='INFO')
 
         # Initiate subsources
         self.subsources = {}
