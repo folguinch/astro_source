@@ -248,7 +248,7 @@ class SubSource(object):
         """
         if name is None:
             name = data.pop('name', name)
-        ignore_keys = ['type']
+        ignore_keys = ['type', 'name']
         info = {}
         position = {'frame': 'icrs'}
         for key, val in data.items():
