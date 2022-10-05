@@ -299,7 +299,7 @@ class LoadSource(argparse.Action):
         super().__init__(option_strings, dest, **defaults)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        source = Source(config_file=values[0].expanduser())
+        source = Source(config_file=Path(values[0]).expanduser())
         setattr(namespace, self.dest, source)
 
 class LoadSources(argparse.Action):
