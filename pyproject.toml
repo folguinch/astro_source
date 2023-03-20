@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "astro-source"
+version = "0.3.0"
+description = "Package to manage astronomical source data"
+authors = ["Fernando Olguin <f.olguin.ch@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "astro_source"}]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+spectral-cube = "^0.6.0"
+astropy = "^5.2.1"
+configparseradv = {path = "../configparseradv"}
+toolkit = {path = "../toolkit"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
