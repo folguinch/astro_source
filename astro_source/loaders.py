@@ -1,7 +1,7 @@
 """Data loading functions."""
 from typing import Any, Dict
 
-def load_data_by_type(file_name: 'Path',
+def load_data_by_type(file_name: 'pathlib.Path',
                       dtype: str,
                       loaders: Dict,
                       **kwargs) -> Any:
@@ -17,7 +17,7 @@ def load_data_by_type(file_name: 'Path',
         raise TypeError(f'Type {dtype} does not exist')
     return loaders[dtype](file_name, **kwargs)
 
-def kwargs_from_config(config: 'ConfigParserAdv',
+def kwargs_from_config(config: 'configparseradv.configparser.ConfigParserAdv',
                        base: str = 'loader') -> Dict:
     """Generate a keyword dictionary from options begining with `base`.
 
