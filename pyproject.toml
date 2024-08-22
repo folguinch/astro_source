@@ -8,11 +8,13 @@ readme = "README.md"
 packages = [{include = "astro_source"}]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-spectral-cube = "^0.6.0"
-astropy = "^5.2.1"
+python = ">=3.9,<4.0"
+spectral-cube = "^0.6.5"
+astropy = "^6.0.0"
 configparseradv = {path = "../configparseradv"}
 toolkit = {path = "../toolkit"}
+#configparseradv = {git = "https://github.com/folguinch/configparseradv.git"}
+#toolkit = {git = "https://github.com/folguinch/toolkit.git"}
 
 
 [build-system]
