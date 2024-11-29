@@ -88,14 +88,20 @@ class Container(metaclass=abc.ABCMeta):
         if file_name is not None:
             self.update_config(section, file=str(file_name))
 
-    def update_config(self, section: str, **kargs):
+    def update_config(self, section: str, **kwargs):
         """Update config `section` with options and values in `kwargs`"""
         if section not in self.config:
             self.log.info('Adding section %s', section)
+            new_vals = {f'{key}': f'{val}' in key, vals in kwargs.items()}
+            self.config[section] = new_vals
         else:
             self.log.info('Updating section %s', section)
-        for key, val in kargs.items():
-            self.config[section][key] = str(val)
+            for key, val in kwargs.items():
+                self.config[section][key] = str(val)
+
+    def copy_config(self, section: str, new_section: str):
+        """Copy config section ignoring defaults."""
+        self.config.copy_section(section, new_section, ignore_default=True)
 
     def __getitem__(self, section: str):
         if section not in self._data:
