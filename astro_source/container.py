@@ -92,7 +92,7 @@ class Container(metaclass=abc.ABCMeta):
         """Update config `section` with options and values in `kwargs`"""
         if section not in self.config:
             self.log.info('Adding section %s', section)
-            new_vals = {f'{key}': f'{val}' in key, vals in kwargs.items()}
+            new_vals = {f'{key}': f'{val}' for key, vals in kwargs.items()}
             self.config[section] = new_vals
         else:
             self.log.info('Updating section %s', section)
