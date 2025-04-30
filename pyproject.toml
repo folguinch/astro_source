@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "astro-source"
-version = "0.3.0"
+version = "0.3.1"
 description = "Package to manage astronomical source data"
 authors = ["Fernando Olguin <f.olguin.ch@gmail.com>"]
 license = "MIT"
@@ -11,10 +11,10 @@ packages = [{include = "astro_source"}]
 python = ">=3.9,<4.0"
 spectral-cube = "^0.6.5"
 astropy = "^6.0.0"
-configparseradv = {path = "../configparseradv"}
-toolkit = {path = "../toolkit"}
-#configparseradv = {git = "https://github.com/folguinch/configparseradv.git"}
-#toolkit = {git = "https://github.com/folguinch/toolkit.git"}
+#configparseradv = {path = "../configparseradv"}
+#toolkit = {path = "../toolkit"}
+configparseradv = {git = "https://github.com/folguinch/configparseradv.git"}
+toolkit = {git = "https://github.com/folguinch/toolkit.git"}
 
 
 [build-system]
