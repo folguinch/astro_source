@@ -92,8 +92,9 @@ class Source(Container):
     @property
     def indexed_name(self) -> str:
         """Source indexed name (e.g. MM1)."""
-        cat = self.config(self.config.default_section, 'index_type',
-                          fallback='')
+        cat = self.config.get(self.config.default_section,
+                              'index_type',
+                              fallback='')
         idx = self.idx
         if idx is None:
             return ''
