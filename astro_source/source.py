@@ -16,12 +16,12 @@ class Source(Container):
     """Manages an astronomical source/region properties and data.
 
     Attributes:
-      name: name of the source.
-      config_file: configuration file name.
-      config: configuration file of the source.
-      subsources: region subsources (if any).
-      log: logging manager.
-      _data: the data belonging to the source.
+      name: Name of the source.
+      config_file: Configuration file name.
+      config: Configuration file of the source.
+      subsources: Region subsources (if any).
+      log: Logging manager.
+      _data: The data belonging to the source.
     """
     log = get_logger(__name__, filename=__package__+'.log')
 
@@ -32,9 +32,9 @@ class Source(Container):
         """Creates a new Source.
 
         Args:
-          name: optional; the name of the source.
-          config_file: optional; configuration file name.
-          config: optional; `ConfigParserAdv` object.
+          name: Optional. The name of the source.
+          config_file: Optional. Configuration file name.
+          config: Optional. `ConfigParserAdv` object.
         """
         # Initialize
         if name is not None:
@@ -84,37 +84,60 @@ class Source(Container):
         return self.config.getquantity(section, opt, fallback=None)
 
     @property
-    def distance(self):
+    def idx(self) -> Union[int, None]:
+        """Source index."""
+        return self.config.getint(self.config.default_section,
+                                  'index',
+                                  fallback=None)
+    @property
+    def indexed_name(self) -> str:
+        """Source indexed name (e.g. MM1)."""
+        cat = self.config(self.config.default_section, 'index_type',
+                          fallback='')
+        idx = self.idx
+        if idx is None:
+            return ''
+
+        return f'{cat}{idx}'
+
+    @property
+    def distance(self) -> u.Quantity:
+        """Source distance."""
         return self.get_quantity('distance')
 
     @property
-    def luminosity(self):
+    def luminosity(self) -> u.Quantity:
+        """Source luminosity."""
         return self.get_quantity('luminosity')
 
     @property
-    def vlsr(self):
+    def vlsr(self) -> u.Quantity:
+        """Source LSR velocity."""
         return self.get_quantity('vlsr')
 
     @property
-    def position(self):
+    def position(self) -> SkyCoord:
+        """Source position."""
         ra = self.config['INFO']['ra']
         dec = self.config['INFO']['dec']
         frame = self.config.get('INFO', 'frame', fallback='icrs')
         return SkyCoord(ra, dec, frame=frame)
 
     @property
-    def ra(self):
+    def ra(self) -> u.Quantity:
+        """Source R. A."""
         return self.position.ra
 
     @property
-    def dec(self):
+    def dec(self) -> u.Quantity:
+        """Source declination."""
         return self.position.dec
 
     def get_type(self, section: str) -> str:
         """Get the type of data.
 
         Args:
-          section: the data key.
+          section: The data key.
         """
         return self.config[section]['type'].lower()
 
@@ -137,9 +160,9 @@ class Source(Container):
         name) has to be in the source configuration file.
 
         Args:
-          section: the data section to be loaded.
-          file_name: optional; overwrites the config file name.
-          kwargs: optional; additional arguments for loader function.
+          section: The data section to be loaded.
+          file_name: Optional. Overwrites the config file name.
+          kwargs: Optional. Additional arguments for loader function.
         """
         # File name
         if file_name is not None:
@@ -179,7 +202,10 @@ class Source(Container):
         """Load a configuration file.
 
         Args:
-            config_file (str): name of the configuration file
+            config_file: Name of the configuration file.
+            update_from: Optional. `ConfigParserAdv` like object to update
+                values in file.
+            default_section: Optional. Default section for parser.
         """
         super().load_config(config_file, update_from=update_from,
                             default_section=default_section)
@@ -203,6 +229,12 @@ class Source(Container):
     def get_data_sections(self) -> Sequence:
         return super().get_data_sections(tuple(REGISTERED_CLASSES.keys()))
 
+    def full_name(self, separator: str = '_'):
+        """Generate a source name based on name and index values."""
+        parts = [self.name, self.indexed_name]
+
+        return separator.join(parts).strip(separator)
+
 class SubSource(object):
     """Class for storing individual source information.
 
@@ -214,8 +246,8 @@ class SubSource(object):
     If only `ra` and `dec` are given, then ICRS is assumed as `frame`.
 
     Attributes:
-      name: subsource name.
-      info: source information.
+      name: Subsource name.
+      info: Source information.
     """
 
     def __init__(self, name: str, **info):
@@ -229,8 +261,8 @@ class SubSource(object):
         """Create a new subsource from a `ConfigParser` proxy.
 
         Args:
-          parser: configuration parser proxy.
-          name: optional; subsource name.
+          parser: Configuration parser proxy.
+          name: Optional. Subsource name.
         """
         name = parser.get('name', fallback=name)
 
@@ -243,8 +275,8 @@ class SubSource(object):
         """Create a new subsource from a dictionary.
 
         Args:
-          data: configuration parser proxy.
-          name: optional; subsource name.
+          data: Configuration parser proxy.
+          name: Optional. Subsource name.
         """
         if name is None:
             name = data.pop('name', name)
